@@ -23,6 +23,8 @@ and then
 
 `cc naiviewer.c -o naiviewer $(pkg-config --cflags --libs raylib)`
 
+(Note that this command may differ depending on your operating system but this is the command for MacOS).
+
 Then, whenever you want to run NaiViewer, just run the command
 
 `./naiviewer`
