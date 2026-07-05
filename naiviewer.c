@@ -686,7 +686,7 @@ int main(void) {
 	
 	int fullsize = 1;
 	
-	int mod = 20; /* Prevents the event listener from responding too frequently and making the program run too fast. */
+	int mod = 10; /* Prevents the event listener from responding too frequently and making the program run too fast. */
 	
 	char rle[40201] = {0};
 	
