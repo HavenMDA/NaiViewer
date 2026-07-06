@@ -678,10 +678,6 @@ int main(void) {
 	
 	int phase = 0;
 	
-	int bconds[117] = {0};
-	
-	int sconds[117] = {0};
-	
 	int colorized = 0;
 	
 	int eventcounter = 0;
@@ -697,6 +693,10 @@ int main(void) {
 	srand(time(NULL));
 	
 	ruleswitch:
+	
+	int bconds[117] = {0};
+	
+	int sconds[117] = {0};
 	
 	rparse(&bconds, &sconds);
 	
