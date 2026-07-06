@@ -710,6 +710,24 @@ int main(void) {
 			
 			cursorpos[1] = x;
 			
+			if (!phase) {
+				
+				selection[0][0] = y;
+				
+				selection[0][1] = x;
+				
+				selection[1][0] = y;
+				
+				selection[1][1] = x;
+				
+			} else {
+				
+				selection[1][0] = y;
+				
+				selection[1][1] = x;
+				
+			}
+			
 		}
 		
 		if (IsMouseButtonDown(MOUSE_BUTTON_RIGHT)) {
@@ -719,6 +737,24 @@ int main(void) {
 			cursorpos[0] = y;
 			
 			cursorpos[1] = x;
+			
+			if (!phase) {
+				
+				selection[0][0] = y;
+				
+				selection[0][1] = x;
+				
+				selection[1][0] = y;
+				
+				selection[1][1] = x;
+				
+			} else {
+				
+				selection[1][0] = y;
+				
+				selection[1][1] = x;
+				
+			}
 			
 		}
 		
@@ -744,7 +780,7 @@ int main(void) {
 			
 		}
 		
-		if (IsKeyPressed(KEY_TAB)) advance(&world, bconds, sconds, colorized);
+		if (IsKeyPressed(KEY_EQUAL)) advance(&world, bconds, sconds, colorized);
 		
 		if (IsKeyPressed(KEY_UP) || (IsKeyDown(KEY_W) && !(eventcounter % mod))) {
 			
@@ -898,9 +934,15 @@ int main(void) {
 				
 				for (int x = xstart; x != xend; x += xinc) {
 					
-					world[y][x]++;
-					
-					world[y][x] %= 2;
+					if (world[y][x]) {
+						
+						world[y][x] = 0;
+						
+					} else {
+						
+						world[y][x] = 1;
+						
+					}
 					
 				}
 				
