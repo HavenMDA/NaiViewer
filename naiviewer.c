@@ -10,6 +10,8 @@
 
 #include "dict.h"
 
+/* Compilation command for Raspberry Pi: gcc naiviewer.c -o naiviewer -lraylib -lGLESv2 -lEGL -lm -lpthread -ldl -lX11 */
+
 void rparse(int (* bconds)[117], int (* sconds)[117]) {
 	
 	printf("Rule: ");
@@ -688,9 +690,13 @@ int main(void) {
 	
 	int mod = 10; /* Prevents the event listener from responding too frequently and making the program run too fast. */
 	
+	int tpressed = 0;
+	
 	char rle[40201] = {0};
 	
 	srand(time(NULL));
+	
+	ruleswitch:
 	
 	rparse(&bconds, &sconds);
 	
@@ -1000,6 +1006,14 @@ int main(void) {
 			
 		}
 		
+		if (IsKeyPressed(KEY_T)) {
+			
+			tpressed = 1;
+			
+			break;
+			
+		}
+		
 		if (IsKeyPressed(KEY_V)) {
 			
 			makeworld(GetClipboardText(), &world, cursorpos, fullsize);
@@ -1049,6 +1063,14 @@ int main(void) {
 	}
 	
 	CloseWindow();
+	
+	if (tpressed) {
+		
+		tpressed = 0;
+		
+		goto ruleswitch;
+		
+	}
 	
 	return 0;
 	
