@@ -1196,13 +1196,13 @@ int main(void) {
 		
 		if (IsKeyPressed(KEY_ZERO)) {
 			
-			selection[0][0] = 100;
+			selection[0][0] = cursorpos[0];
 			
-			selection[0][1] = 100;
+			selection[0][1] = cursorpos[1];
 			
-			selection[1][0] = 100;
+			selection[1][0] = cursorpos[0];
 			
-			selection[1][1] = 100;
+			selection[1][1] = cursorpos[1];
 			
 			phase = 0;
 			
