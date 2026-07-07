@@ -12,7 +12,7 @@
 
 /* Compilation command for Raspberry Pi: gcc naiviewer.c -o naiviewer -lraylib -lGLESv2 -lEGL -lm -lpthread -ldl -lX11 */
 
-void rparse(int (* bconds)[117], int (* sconds)[117]) {
+void rparse(int (* bconds)[117], int (* sconds)[117], int * naive) {
 	
 	printf("Rule: ");
 	
@@ -27,6 +27,14 @@ void rparse(int (* bconds)[117], int (* sconds)[117]) {
 	char letters[] = "cekainyqjrtwz";
 	
 	while ((c != '/')) {
+		
+		if (c == 'N') {
+			
+			*naive = 1;
+			
+			goto bend;
+			
+		}
 		
 		if (c == 'B') goto bend;
 		
@@ -258,9 +266,11 @@ void rparse(int (* bconds)[117], int (* sconds)[117]) {
 	
 }
 
-void advance(int (* world)[200][200], int bconds[117], int sconds[117], int colorized) {
+void advance(int (* world)[200][200], int bconds[117], int sconds[117], int colorized, int naive) {
 	
 	int neigh[8][2] = {{1, 1}, {1, 0}, {1, -1}, {0, 1}, {0, -1}, {-1, 1}, {-1, 0}, {-1, -1}};
+	
+	int next[200][200] = {0};
 	
 	for (int y = 0; y < 200; y++) {
 		
@@ -296,9 +306,13 @@ void advance(int (* world)[200][200], int bconds[117], int sconds[117], int colo
 			
 			if ((*world)[y][x] && !sconds[dict[binary]]) {
 				
-				(*world)[y][x] = 0;
-				
-				continue;
+				if (naive) {
+					
+					(*world)[y][x] = 0;
+					
+					continue;
+					
+				}
 				
 			}
 			
@@ -306,15 +320,33 @@ void advance(int (* world)[200][200], int bconds[117], int sconds[117], int colo
 				
 				if (colorized) {
 					
-					(*world)[y][x] = count + 1;
+					if (naive) {
+						
+						(*world)[y][x] = count + 1;
+						
+						continue;
+						
+					} else {
+						
+						next[y][x] = count + 1;
+						
+					}
 					
 				} else {
 					
-					(*world)[y][x] = 1;
+					if (naive) {
+						
+						(*world)[y][x] = 1;
+						
+						continue;
+						
+					} else {
+						
+						next[y][x] = 1;
+						
+					}
 					
 				}
-				
-				continue;
 				
 			}
 			
@@ -322,15 +354,47 @@ void advance(int (* world)[200][200], int bconds[117], int sconds[117], int colo
 				
 				if (colorized) {
 					
-					(*world)[y][x] = count + 1;
-					
+					if (naive) {
+						
+						(*world)[y][x] = count + 1;
+						
+						continue;
+						
+					} else {
+						
+						next[y][x] = count + 1;
+						
+					}
+						
 				} else {
 					
-					(*world)[y][x] = 1;
+					if (naive) {
+						
+						(*world)[y][x] = 1;
+						
+						continue;
+						
+					} else {
+						
+						next[y][x] = 1;
+						
+					}
 					
 				}
 				
-				continue;
+			}
+			
+		}
+		
+	}
+	
+	if (!naive) {
+		
+		for (int y = 0; y < 200; y++) {
+			
+			for (int x = 0; x < 200; x++) {
+				
+				(*world)[y][x] = next[y][x];
 				
 			}
 			
@@ -684,7 +748,7 @@ int main(void) {
 	
 	int fullsize = 1;
 	
-	int mod = 10; /* Prevents the event listener from responding too frequently and making the program run too fast. */
+	int mod = 1; /* Prevents the event listener from responding too frequently and making the program run too fast. */
 	
 	int tpressed = 0;
 	
@@ -698,7 +762,9 @@ int main(void) {
 	
 	int sconds[117] = {0};
 	
-	rparse(&bconds, &sconds);
+	int naive = 0;
+	
+	rparse(&bconds, &sconds, &naive);
 	
 	InitWindow(1000, 1000, "NaiViewer");
 	
@@ -786,7 +852,7 @@ int main(void) {
 			
 		}
 		
-		if (IsKeyPressed(KEY_EQUAL)) advance(&world, bconds, sconds, colorized);
+		if (IsKeyPressed(KEY_EQUAL)) advance(&world, bconds, sconds, colorized, naive);
 		
 		if (IsKeyPressed(KEY_UP) || (IsKeyDown(KEY_W) && !(eventcounter % mod))) {
 			
@@ -1048,7 +1114,7 @@ int main(void) {
 		
 		colorized %= 2;
 		
-		if (IsKeyDown(KEY_SPACE) && !(eventcounter % mod)) advance(&world, bconds, sconds, colorized);
+		if (IsKeyDown(KEY_SPACE) && !(eventcounter % mod)) advance(&world, bconds, sconds, colorized, naive);
 		
 		eventcounter++;
 		
