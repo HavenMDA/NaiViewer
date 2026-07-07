@@ -26,6 +26,8 @@ void rparse(int (* bconds)[117], int (* sconds)[117], int * naive) {
 	
 	char letters[] = "cekainyqjrtwz";
 	
+	int lengths[9] = {0, 2, 6, 10, 13, 10, 6, 2, 0};
+	
 	while ((c != '/')) {
 		
 		if (c == 'N') {
@@ -35,6 +37,8 @@ void rparse(int (* bconds)[117], int (* sconds)[117], int * naive) {
 			goto bend;
 			
 		}
+		
+		if (c == 'R') goto randgen;
 		
 		if (c == 'B') goto bend;
 		
@@ -261,6 +265,102 @@ void rparse(int (* bconds)[117], int (* sconds)[117], int * naive) {
 		send:
 		
 		c = getchar();
+		
+		continue;
+		
+		randgen:
+		
+		srand(time(NULL));
+		
+		*naive = rand() % 2;
+		
+		if (*naive) {
+			
+			printf("N");
+			
+		}
+		
+		printf("B");
+		
+		for (int n = 3; n < 9; n++) {
+			
+			for (int c = 0; c < lengths[n]; c++) {
+				
+				(*bconds)[n * 13 + c] = rand() % 2;
+				
+			}
+			
+		}
+		
+		(*bconds)[42] = 1;
+		
+		(*bconds)[43] = 1;
+		
+		for (int n = 0; n < 9; n++) {
+			
+			for (int c = 0; c < lengths[n]; c++) {
+				
+				if ((*bconds)[n * 13 + c]) {
+					
+					printf("%d", n);
+					
+					break;
+					
+				}
+				
+			}
+			
+			for (int c = 0; c < lengths[n]; c++) {
+				
+				if ((*bconds)[n * 13 + c]) {
+					
+					printf("%c", letters[c]);
+					
+				}
+				
+			}
+			
+		}
+		
+		printf("/S");
+		
+		for (int n = 0; n < 9; n++) {
+			
+			for (int c = 0; c < lengths[n]; c++) {
+				
+				(*sconds)[n * 13 + c] = rand() % 2;
+				
+			}
+			
+		}
+		
+		for (int n = 0; n < 9; n++) {
+			
+			for (int c = 0; c < lengths[n]; c++) {
+				
+				if ((*sconds)[n * 13 + c]) {
+					
+					printf("%d", n);
+					
+					break;
+					
+				}
+				
+			}
+			
+			for (int c = 0; c < lengths[n]; c++) {
+				
+				if ((*sconds)[n * 13 + c]) {
+					
+					printf("%c", letters[c]);
+					
+				}
+				
+			}
+			
+		}
+		
+		printf("\n");
 		
 	}
 	
@@ -748,7 +848,7 @@ int main(void) {
 	
 	int fullsize = 1;
 	
-	int mod = 1; /* Prevents the event listener from responding too frequently and making the program run too fast. */
+	int mod = 10; /* Prevents the event listener from responding too frequently and making the program run too fast. */
 	
 	int tpressed = 0;
 	
