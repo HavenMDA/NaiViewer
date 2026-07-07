@@ -1,5 +1,5 @@
 # NaiViewer
-A program for simulating 2-state isotropic non-totalistic naiverules, like NaiveLife, for example.
+A program for simulating 2-state isotropic non-totalistic CA, like Life and NaiveLife.
 
 Features:
 
@@ -29,7 +29,7 @@ Then, whenever you want to run NaiViewer, just run the command
 
 `./naiviewer`
 
-You will be prompted for a rule. Write the rule in standard B.../S... notation, or, if you want to use standard NaiveLife, just hit Enter.
+You will be prompted for a rule. Write the rule in standard B.../S... notation, or, if you want to use standard Life, just hit Enter. If you want to run NaiveLife, write NB3/S23.
 
 List of keyboard shortcuts:
 
