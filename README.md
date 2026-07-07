@@ -29,7 +29,7 @@ Then, whenever you want to run NaiViewer, just run the command
 
 `./naiviewer`
 
-You will be prompted for a rule. Write the rule in standard B.../S... notation, or, if you want to use standard Life, just hit Enter. If you want to run NaiveLife, write NB3/S23.
+You will be prompted for a rule. Write the rule in standard B.../S... notation, or, if you want to use standard Life, just hit Enter. If you want to run NaiveLife, write NB3/S23, and if you want to generate a random, interesting (no B0, B1, or B2, with B3ai) rule, write "R" and hit Enter.
 
 List of keyboard shortcuts:
 
