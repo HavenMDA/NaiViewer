@@ -12,7 +12,7 @@
 
 /* Compilation command for Raspberry Pi: gcc naiviewer.c -o naiviewer -lraylib -lGLESv2 -lEGL -lm -lpthread -ldl -lX11 */
 
-void rparse(int (* bconds)[117], int (* sconds)[117], int * naive) {
+void rparse(int (* bconds)[117], int (* sconds)[117], int * naive, int * gennum) {
 	
 	printf("Rule: ");
 	
@@ -164,9 +164,9 @@ void rparse(int (* bconds)[117], int (* sconds)[117], int * naive) {
 	
 	currentlynegating = 0;
 	
-	while (c != '\n') {
-		
-		if (c == '/') goto send;
+	c = getchar();
+	
+	while ((c != '\n') && (c != '/')) {
 		
 		if (c == 'S') goto send;
 		
@@ -362,11 +362,31 @@ void rparse(int (* bconds)[117], int (* sconds)[117], int * naive) {
 		
 		printf("\n");
 		
+		return;
+		
 	}
+	
+	*gennum = 0;
+	
+	while (c != '\n') {
+		
+		if ((c == 'G') || (c == '/')) goto gend;
+		
+		*gennum *= 10;
+		
+		*gennum += (c - '0');
+		
+		gend:
+		
+		c = getchar();
+		
+	}
+	
+	if (!(*gennum)) *gennum = 2;
 	
 }
 
-void advance(int (* world)[200][200], int bconds[117], int sconds[117], int colorized, int naive) {
+void advance(int (* world)[200][200], int bconds[117], int sconds[117], int colorized, int naive, int gennum) {
 	
 	int neigh[8][2] = {{1, 1}, {1, 0}, {1, -1}, {0, 1}, {0, -1}, {-1, 1}, {-1, 0}, {-1, -1}};
 	
@@ -396,49 +416,49 @@ void advance(int (* world)[200][200], int bconds[117], int sconds[117], int colo
 				
 				if ((*world)[y + neigh[n][0]][x + neigh[n][1]]) {
 					
-					binary++;
-					
-					count++;
+					if (gennum > 2) {
+						
+						if ((*world)[y + neigh[n][0]][x + neigh[n][1]] == 1) {
+							
+							binary++;
+							
+							count++;
+							
+						}
+						
+					} else {
+						
+						binary++;
+						
+						count++;
+						
+					}
 					
 				}
 				
 			}
 			
-			if ((*world)[y][x] && !sconds[dict[binary]]) {
+			if (!(*world)[y][x] && bconds[dict[binary]]) { /* Birth */
 				
 				if (naive) {
 					
-					(*world)[y][x] = 0;
-					
-					continue;
-					
-				}
-				
-			}
-			
-			if (!(*world)[y][x] && bconds[dict[binary]]) {
-				
-				if (colorized) {
-					
-					if (naive) {
+					if (colorized) {
 						
 						(*world)[y][x] = count + 1;
 						
-						continue;
-						
 					} else {
-						
-						next[y][x] = count + 1;
-						
-					}
-					
-				} else {
-					
-					if (naive) {
 						
 						(*world)[y][x] = 1;
 						
-						continue;
+					}
+					
+					continue; /* Prevents cell states from being overwritten more than once in naive rules */
+						
+				} else {
+					
+					if (colorized) {
+						
+						next[y][x] = count + 1;
 						
 					} else {
 						
@@ -450,33 +470,105 @@ void advance(int (* world)[200][200], int bconds[117], int sconds[117], int colo
 				
 			}
 			
-			if ((*world)[y][x] && sconds[dict[binary]]) {
+			if ((*world)[y][x] && !(sconds[dict[binary]])) { /* Death */
 				
-				if (colorized) {
+				if (gennum == 2) { /* Two-state rules */
 					
 					if (naive) {
 						
-						(*world)[y][x] = count + 1;
+						(*world)[y][x] = 0;
+						
+						continue; /* Prevents cell states from being overwritten more than once in naive rules */
+						
+					} else {
+						
+						next[y][x] = 0;
+						
+					}
+					
+				} else { /* Generations rules */
+					
+					if (naive) {
+						
+						naive_dying:
+						
+						(*world)[y][x]++;
+						
+						(*world)[y][x] %= gennum;
+						
+						/* The two lines above increment all dying cells and kill cells in their last stage of death */
+						
+						continue; /* Prevents cell states from being overwritten more than once in naive rules */
+						
+					} else {
+						
+						dying:
+						
+						next[y][x] = (*world)[y][x] + 1;
+						
+						next[y][x] %= gennum;
+						
+					}
+					
+				}
+				
+			}
+			
+			if ((*world)[y][x] && sconds[dict[binary]]) { /* Survival */
+				
+				if (gennum == 2) {
+					
+					if (naive) {
+						
+						if (colorized) {
+							
+							(*world)[y][x] = count + 1;
+							
+						} else {
+							
+							(*world)[y][x] = 1;
+							
+						}
 						
 						continue;
 						
 					} else {
 						
-						next[y][x] = count + 1;
+						if (colorized) {
+							
+							next[y][x] = count + 1;
+							
+						} else {
+							
+							next[y][x] = 1;
+							
+						}
 						
 					}
-						
+					
 				} else {
 					
 					if (naive) {
 						
-						(*world)[y][x] = 1;
+						if ((*world)[y][x] == 1) {
+							
+							(*world)[y][x] = 1;
+							
+						} else {
+							
+							goto naive_dying;
+							
+						}
 						
 						continue;
 						
 					} else {
 						
-						next[y][x] = 1;
+						if ((*world)[y][x] == 1) {
+							
+							next[y][x] = 1;
+							
+						}
 						
 					}
 					
@@ -504,9 +596,11 @@ void advance(int (* world)[200][200], int bconds[117], int sconds[117], int colo
 	
 }
 
-void show(int world[200][200], int cursorpos[2], int selection[2][2], int colorized) {
+void show(int world[200][200], int cursorpos[2], int selection[2][2], int colorized, int gennum) {
 	
 	int xstart, xend, xinc, ystart, yend, yinc;
+	
+	int a;
 	
 	Color cursor = {255, 0, 0, 128};
 	
@@ -526,7 +620,17 @@ void show(int world[200][200], int cursorpos[2], int selection[2][2], int colori
 					
 				} else {
 					
+					int g = gennum - 2;
+					
+					int k = world[y][x] - 1;
+					
+					int a = k * (255 / g);
+					
 					DrawRectangle(x * 5, y * 5, 5, 5, WHITE);
+						
+					Color gencolor = {0, 0, 255, a};
+						
+					DrawRectangle(x * 5, y * 5, 5, 5, gencolor);
 					
 				}
 				
@@ -551,8 +655,6 @@ void show(int world[200][200], int cursorpos[2], int selection[2][2], int colori
 	}
 	
 	if ((selection[0][0] == selection[1][0]) && (selection[0][1] == selection[1][1])) return;
-	
-	// 11, 13 -> 15, 11
 	
 	xstart = selection[0][1] + 1;
 	
@@ -848,7 +950,7 @@ int main(void) {
 	
 	int fullsize = 1;
 	
-	int mod = 10; /* Prevents the event listener from responding too frequently and making the program run too fast. */
+	int mod = 1; /* Prevents the event listener from responding too frequently and making the program run too fast. */
 	
 	int tpressed = 0;
 	
@@ -864,7 +966,9 @@ int main(void) {
 	
 	int naive = 0;
 	
-	rparse(&bconds, &sconds, &naive);
+	int gennum = 2;
+	
+	rparse(&bconds, &sconds, &naive, &gennum);
 	
 	InitWindow(1000, 1000, "NaiViewer");
 	
@@ -952,7 +1056,7 @@ int main(void) {
 			
 		}
 		
-		if (IsKeyPressed(KEY_EQUAL)) advance(&world, bconds, sconds, colorized, naive);
+		if (IsKeyPressed(KEY_EQUAL)) advance(&world, bconds, sconds, colorized, naive, gennum);
 		
 		if (IsKeyPressed(KEY_UP) || (IsKeyDown(KEY_W) && !(eventcounter % mod))) {
 			
@@ -1122,7 +1226,7 @@ int main(void) {
 			
 		}
 		
-		if (IsKeyPressed(KEY_K)) colorized++;
+		if (IsKeyPressed(KEY_K) && (gennum == 2)) colorized++;
 		
 		if (IsKeyPressed(KEY_Q)) break;
 		
@@ -1214,7 +1318,7 @@ int main(void) {
 		
 		colorized %= 2;
 		
-		if (IsKeyDown(KEY_SPACE) && !(eventcounter % mod)) advance(&world, bconds, sconds, colorized, naive);
+		if (IsKeyDown(KEY_SPACE) && !(eventcounter % mod)) advance(&world, bconds, sconds, colorized, naive, gennum);
 		
 		eventcounter++;
 		
@@ -1222,7 +1326,7 @@ int main(void) {
 		
 		ClearBackground(BLACK);
 		
-		show(world, cursorpos, selection, colorized);
+		show(world, cursorpos, selection, colorized, gennum);
 		
 		EndDrawing();
 		
