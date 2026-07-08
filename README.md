@@ -3,7 +3,7 @@ A program for simulating 2-state isotropic non-totalistic CA, like Life and Naiv
 
 Features:
 
-- Full support for INT rules
+- Full support for INT and Generations rules (like Brain's Brain, B2/S/G3)
 
 - Mouse drawing
 
@@ -45,6 +45,6 @@ List of keyboard shortcuts:
 
 - If you want to clear the board, press 0 (if there is a selection) and press Delete/Backspace.
 
-- Press K to toggle neighborhood-based coloring, which is off by default.
+- Press K to toggle neighborhood-based coloring, which is off by default. This is not compatible with Generations.
 
 - Press I to invert the current selection, or, if there is none, the whole world will be inverted.
