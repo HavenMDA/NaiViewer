@@ -12,7 +12,13 @@
 
 /* Compilation command for Raspberry Pi: gcc naiviewer.c -o naiviewer -lraylib -lGLESv2 -lEGL -lm -lpthread -ldl -lX11 */
 
-void rparse(int (* bconds)[117], int (* sconds)[117], int * naive, int * gennum) {
+struct Ruletype {
+	
+	int bsfkl;
+	
+};
+
+void rparse(int (* bconds)[117], int (* sconds)[117], int (* fconds)[117], int (* kconds)[117], int (* lconds)[117], int * naive, int * gennum, struct Ruletype * ruletype) {
 	
 	printf("Rule: ");
 	
@@ -362,15 +368,37 @@ void rparse(int (* bconds)[117], int (* sconds)[117], int * naive, int * gennum)
 		
 		printf("\n");
 		
+		(*ruletype).bsfkl = 0;
+		
 		return;
 		
 	}
 	
 	*gennum = 0;
 	
+	if (c == '\n') {
+		
+		(*ruletype).bsfkl = 0;
+		
+		*gennum = 2;
+		
+		return;
+		
+	}
+	
+	c = getchar();
+	
+	if (c == 'G') goto generations;
+	
+	if (c == 'F') goto bsfkl;
+	
+	generations:;
+	
+	c = getchar();
+	
 	while (c != '\n') {
 		
-		if ((c == 'G') || (c == '/')) goto gend;
+		if (c == '/') goto gend;
 		
 		*gennum *= 10;
 		
@@ -382,11 +410,335 @@ void rparse(int (* bconds)[117], int (* sconds)[117], int * naive, int * gennum)
 		
 	}
 	
-	if (!(*gennum)) *gennum = 2;
+	if (!(*gennum) || (*gennum == 1)) {
+		
+		 *gennum = 2;
+		 
+	}
+	
+	(*ruletype).bsfkl = 0;
+	
+	return;
+	
+	bsfkl:;
+	
+	(*ruletype).bsfkl = 1;
+	
+	c = getchar();
+	
+	while ((c != '/')) {
+		
+		if (isdigit(c)) {
+			
+			currentlynegating = 0;
+			
+			nn = c - '0';
+			
+			if (lastdigit >= 0) {
+				
+				for (int n = 0; n < 13; n++) {
+					
+					(*fconds)[lastdigit * 13 + n] = 1;
+					
+				}}
+			
+			for (int n = 0; n < 13; n++) {
+				
+				(*fconds)[nn * 13 + n] = 2;
+				
+			}
+			
+			lastdigit = nn;
+			
+			(*fconds)[nn] = 1;
+			
+		}
+		
+		if (isalpha(c)) {
+			
+			lastdigit = -1;
+			
+			int i = -1;
+			
+			for (int n = 0; n < 13; n++) {
+				
+				if (letters[n] == c) {
+					
+					i = n;
+					
+					break;
+					
+				}
+				
+			}
+			
+			for (int n = 0; n < 13; n++) {
+				
+				if (currentlynegating) {
+					
+					if (n == i) {
+						
+						(*fconds)[nn * 13 + n] = 0;
+						
+					}
+					
+				} else {
+					
+					if ((*fconds)[nn * 13 + n] == 2) {
+						
+						(*fconds)[nn * 13 + n] = 0;
+						
+					}
+					
+					if (((*fconds)[nn * 13 + n] == 0) && (n == i)) {
+						
+						(*fconds)[nn * 13 + n] = 1;
+						
+					}
+					
+				}
+				
+			}
+			
+		}
+		
+		if (c == '-') {
+			
+			lastdigit = -1;
+			
+			currentlynegating = 1;
+			
+			for (int n = 0; n < 13; n++) {
+				
+				if ((*fconds)[nn * 13 + n] == 2) {
+					
+					(*fconds)[nn * 13 + n] = 1;
+					
+				}
+				
+			}
+			
+		}
+		
+		fend:;
+		
+		c = getchar();
+		
+	}
+	
+	c = getchar();
+	
+	while ((c != '/')) {
+		
+		if (c == 'K') goto kend;
+		
+		if (isdigit(c)) {
+			
+			currentlynegating = 0;
+			
+			nn = c - '0';
+			
+			if (lastdigit >= 0) {
+				
+				for (int n = 0; n < 13; n++) {
+					
+					(*kconds)[lastdigit * 13 + n] = 1;
+					
+				}}
+			
+			for (int n = 0; n < 13; n++) {
+				
+				(*kconds)[nn * 13 + n] = 2;
+				
+			}
+			
+			lastdigit = nn;
+			
+			(*kconds)[nn] = 1;
+			
+		}
+		
+		if (isalpha(c)) {
+			
+			lastdigit = -1;
+			
+			int i = -1;
+			
+			for (int n = 0; n < 13; n++) {
+				
+				if (letters[n] == c) {
+					
+					i = n;
+					
+					break;
+					
+				}
+				
+			}
+			
+			for (int n = 0; n < 13; n++) {
+				
+				if (currentlynegating) {
+					
+					if (n == i) {
+						
+						(*kconds)[nn * 13 + n] = 0;
+						
+					}
+					
+				} else {
+					
+					if ((*kconds)[nn * 13 + n] == 2) {
+						
+						(*kconds)[nn * 13 + n] = 0;
+						
+					}
+					
+					if (((*kconds)[nn * 13 + n] == 0) && (n == i)) {
+						
+						(*kconds)[nn * 13 + n] = 1;
+						
+					}
+					
+				}
+				
+			}
+			
+		}
+		
+		if (c == '-') {
+			
+			lastdigit = -1;
+			
+			currentlynegating = 1;
+			
+			for (int n = 0; n < 13; n++) {
+				
+				if ((*kconds)[nn * 13 + n] == 2) {
+					
+					(*kconds)[nn * 13 + n] = 1;
+					
+				}
+				
+			}
+			
+		}
+		
+		kend:;
+		
+		c = getchar();
+		
+	}
+	
+	c = getchar();
+	
+	while ((c != '\n')) {
+		
+		if (c == 'L') goto lend;
+		
+		if (isdigit(c)) {
+			
+			currentlynegating = 0;
+			
+			nn = c - '0';
+			
+			if (lastdigit >= 0) {
+				
+				for (int n = 0; n < 13; n++) {
+					
+					(*lconds)[lastdigit * 13 + n] = 1;
+					
+				}}
+			
+			for (int n = 0; n < 13; n++) {
+				
+				(*lconds)[nn * 13 + n] = 2;
+				
+			}
+			
+			lastdigit = nn;
+			
+			(*lconds)[nn] = 1;
+			
+		}
+		
+		if (isalpha(c)) {
+			
+			lastdigit = -1;
+			
+			int i = -1;
+			
+			for (int n = 0; n < 13; n++) {
+				
+				if (letters[n] == c) {
+					
+					i = n;
+					
+					break;
+					
+				}
+				
+			}
+			
+			for (int n = 0; n < 13; n++) {
+				
+				if (currentlynegating) {
+					
+					if (n == i) {
+						
+						(*lconds)[nn * 13 + n] = 0;
+						
+					}
+					
+				} else {
+					
+					if ((*lconds)[nn * 13 + n] == 2) {
+						
+						(*lconds)[nn * 13 + n] = 0;
+						
+					}
+					
+					if (((*lconds)[nn * 13 + n] == 0) && (n == i)) {
+						
+						(*lconds)[nn * 13 + n] = 1;
+						
+					}
+					
+				}
+				
+			}
+			
+		}
+		
+		if (c == '-') {
+			
+			lastdigit = -1;
+			
+			currentlynegating = 1;
+			
+			for (int n = 0; n < 13; n++) {
+				
+				if ((*lconds)[nn * 13 + n] == 2) {
+					
+					(*lconds)[nn * 13 + n] = 1;
+					
+				}
+				
+			}
+			
+		}
+		
+		lend:;
+		
+		c = getchar();
+		
+	}
+	
+	*gennum = 3;
 	
 }
 
-void advance(int (* world)[200][200], int bconds[117], int sconds[117], int colorized, int naive, int gennum) {
+void advance(int (* world)[200][200], int bconds[117], int sconds[117], int fconds[117], int kconds[117], int lconds[117], int colorized, int naive, int gennum, struct Ruletype ruletype) {
 	
 	int neigh[8][2] = {{1, 1}, {1, 0}, {1, -1}, {0, 1}, {0, -1}, {-1, 1}, {-1, 0}, {-1, -1}};
 	
@@ -400,6 +752,8 @@ void advance(int (* world)[200][200], int bconds[117], int sconds[117], int colo
 			
 			int binary = 0;
 			
+			int second = 0;
+			
 			for (int n = 0; n < 8; n++) {
 				
 				int augx = x + neigh[n][1];
@@ -407,6 +761,8 @@ void advance(int (* world)[200][200], int bconds[117], int sconds[117], int colo
 				int augy = y + neigh[n][0];
 				
 				binary *= 2;
+				
+				second *= 2;
 				
 				if ((augx >= 200) || (augy >= 200) || (augx < 0) || (augy < 0)) {
 					
@@ -416,9 +772,19 @@ void advance(int (* world)[200][200], int bconds[117], int sconds[117], int colo
 				
 				if ((*world)[y + neigh[n][0]][x + neigh[n][1]]) {
 					
-					if (gennum > 2) {
+					if (!(ruletype.bsfkl)) {
 						
-						if ((*world)[y + neigh[n][0]][x + neigh[n][1]] == 1) {
+						if (gennum > 2) {
+							
+							if ((*world)[y + neigh[n][0]][x + neigh[n][1]] == 1) {
+								
+								binary++;
+								
+								count++;
+								
+							}
+							
+						} else {
 							
 							binary++;
 							
@@ -428,9 +794,17 @@ void advance(int (* world)[200][200], int bconds[117], int sconds[117], int colo
 						
 					} else {
 						
-						binary++;
+						if ((*world)[y + neigh[n][0]][x + neigh[n][1]] == 1) {
+							
+							binary++;
+							
+						}
 						
-						count++;
+						if ((*world)[y + neigh[n][0]][x + neigh[n][1]] == 2) {
+							
+							second++;
+							
+						}
 						
 					}
 					
@@ -438,81 +812,9 @@ void advance(int (* world)[200][200], int bconds[117], int sconds[117], int colo
 				
 			}
 			
-			if (!(*world)[y][x] && bconds[dict[binary]]) { /* Birth */
+			if (!(ruletype.bsfkl)) {
 				
-				if (naive) {
-					
-					if (colorized) {
-						
-						(*world)[y][x] = count + 1;
-						
-					} else {
-						
-						(*world)[y][x] = 1;
-						
-					}
-					
-					continue; /* Prevents cell states from being overwritten more than once in naive rules */
-						
-				} else {
-					
-					if (colorized) {
-						
-						next[y][x] = count + 1;
-						
-					} else {
-						
-						next[y][x] = 1;
-						
-					}
-					
-				}
-				
-			} else if ((*world)[y][x] && !(sconds[dict[binary]])) { /* Death */
-				
-				if (gennum == 2) { /* Two-state rules */
-					
-					if (naive) {
-						
-						(*world)[y][x] = 0;
-						
-						continue; /* Prevents cell states from being overwritten more than once in naive rules */
-						
-					} else {
-						
-						next[y][x] = 0;
-						
-					}
-					
-				} else { /* Generations rules */
-					
-					if (naive) {
-						
-						naive_dying:;
-						
-						(*world)[y][x]++;
-						
-						(*world)[y][x] %= gennum;
-						
-						/* The two lines above increment all dying cells and kill cells in their last stage of death */
-						
-						continue; /* Prevents cell states from being overwritten more than once in naive rules */
-						
-					} else {
-						
-						dying:;
-						
-						next[y][x] = (*world)[y][x] + 1;
-						
-						next[y][x] %= gennum;
-						
-					}
-					
-				}
-				
-			} else if ((*world)[y][x] && sconds[dict[binary]]) { /* Survival */
-				
-				if (gennum == 2) {
+				if (!(*world)[y][x] && bconds[dict[binary]]) { /* Birth */
 					
 					if (naive) {
 						
@@ -526,8 +828,8 @@ void advance(int (* world)[200][200], int bconds[117], int sconds[117], int colo
 							
 						}
 						
-						continue;
-						
+						continue; /* Prevents cell states from being overwritten more than once in naive rules */
+							
 					} else {
 						
 						if (colorized) {
@@ -542,33 +844,197 @@ void advance(int (* world)[200][200], int bconds[117], int sconds[117], int colo
 						
 					}
 					
-				} else {
+				} else if ((*world)[y][x] && !(sconds[dict[binary]])) { /* Death */
 					
-					if (naive) {
+					if (gennum == 2) { /* Two-state rules */
 						
-						if ((*world)[y][x] == 1) {
+						if (naive) {
 							
-							(*world)[y][x] = 1;
+							(*world)[y][x] = 0;
+							
+							continue; /* Prevents cell states from being overwritten more than once in naive rules */
 							
 						} else {
 							
-							goto naive_dying;
+							next[y][x] = 0;
 							
 						}
+						
+					} else { /* Generations rules */
+						
+						if (naive) {
+							
+							naive_dying:;
+							
+							(*world)[y][x]++;
+							
+							(*world)[y][x] %= gennum;
+							
+							/* The two lines above increment all dying cells and kill cells in their last stage of death */
+							
+							continue; /* Prevents cell states from being overwritten more than once in naive rules */
+							
+						} else {
+							
+							dying:;
+							
+							next[y][x] = (*world)[y][x] + 1;
+							
+							next[y][x] %= gennum;
+							
+						}
+						
+					}
+					
+				} else if ((*world)[y][x] && sconds[dict[binary]]) { /* Survival */
+					
+					if (gennum == 2) {
+						
+						if (naive) {
+							
+							if (colorized) {
+								
+								(*world)[y][x] = count + 1;
+								
+							} else {
+								
+								(*world)[y][x] = 1;
+								
+							}
+							
+							continue;
+							
+						} else {
+							
+							if (colorized) {
+								
+								next[y][x] = count + 1;
+								
+							} else {
+								
+								next[y][x] = 1;
+								
+							}
+							
+						}
+						
+					} else {
+						
+						if (naive) {
+							
+							if ((*world)[y][x] == 1) {
+								
+								(*world)[y][x] = 1;
+								
+							} else {
+								
+								goto naive_dying;
+								
+							}
+							
+							continue;
+							
+						} else {
+							
+							if ((*world)[y][x] == 1) {
+								
+								next[y][x] = 1;
+								
+							} else {
+								
+								goto dying;
+								
+							}
+							
+						}
+						
+					}
+					
+				}
+				
+			} else {
+				
+				if (((*world)[y][x] == 0) && (bconds[dict[binary]] && fconds[dict[second]])) {
+					
+					if (naive) {
+						
+						(*world)[y][x] = 1;
 						
 						continue;
 						
 					} else {
 						
-						if ((*world)[y][x] == 1) {
-							
-							next[y][x] = 1;
-							
-						} else {
-							
-							goto dying;
-							
-						}
+						next[y][x] = 1;
+						
+					}
+					
+				} else if (((*world)[y][x] == 1) && kconds[dict[second]]) {
+					
+					if (naive) {
+						
+						(*world)[y][x] = 0;
+						
+						continue;
+						
+					} else {
+						
+						next[y][x] = 0;
+						
+					}
+					
+				} else if (((*world)[y][x] == 1) && sconds[dict[binary]]) {
+					
+					if (naive) {
+						
+						(*world)[y][x] = 1;
+						
+						continue;
+						
+					} else {
+						
+						next[y][x] = 1;
+						
+					}
+					
+				} else if (((*world)[y][x] == 1) && (!kconds[dict[second]] && !sconds[dict[binary]])) {
+					
+					if (naive) {
+						
+						(*world)[y][x] = 2;
+						
+						continue;
+						
+					} else {
+						
+						next[y][x] = 2;
+						
+					}
+					
+				} else if (((*world)[y][x] == 2) && lconds[dict[binary]]) {
+					
+					if (naive) {
+						
+						(*world)[y][x] = 0;
+						
+						continue;
+						
+					} else {
+						
+						next[y][x] = 0;
+						
+					}
+				
+				} else if (((*world)[y][x] == 2) && !lconds[dict[binary]]) {
+					
+					if (naive) {
+						
+						(*world)[y][x] = 2;
+						
+						continue;
+						
+					} else {
+						
+						next[y][x] = 2;
 						
 					}
 					
@@ -596,7 +1062,7 @@ void advance(int (* world)[200][200], int bconds[117], int sconds[117], int colo
 	
 }
 
-void show(int world[200][200], int cursorpos[2], int selection[2][2], int colorized, int gennum) {
+void show(int world[200][200], int cursorpos[2], int selection[2][2], int colorized, int gennum, struct Ruletype ruletype) {
 	
 	int xstart, xend, xinc, ystart, yend, yinc;
 	
@@ -606,6 +1072,10 @@ void show(int world[200][200], int cursorpos[2], int selection[2][2], int colori
 	
 	Color redcursor = {0, 0, 255, 255};
 	
+	Color StateOne = {0, 128, 255, 255};
+	
+	Color StateTwo = {255, 0, 0, 255};
+	
 	Color colors[10] = {BLACK, GRAY, WHITE, RED, GREEN, BLUE, ORANGE, PURPLE, YELLOW, PINK};
 	
 	for (int y = 0; y < 200; y++) {
@@ -614,33 +1084,49 @@ void show(int world[200][200], int cursorpos[2], int selection[2][2], int colori
 			
 			if (world[y][x]) {
 				
-				if (colorized) {
+				if (!(ruletype.bsfkl)) {
 					
-					DrawRectangle(x * 5, y * 5, 5, 5, colors[world[y][x]]);
-					
-				} else {
-					
-					g = gennum - 2;
-					
-					k = world[y][x] - 1;
-					
-					if (gennum == 2) {
+					if (colorized) {
 						
-						f = 0;
+						DrawRectangle(x * 5, y * 5, 5, 5, colors[world[y][x]]);
 						
 					} else {
 						
-						f = 255 / g;
+						g = gennum - 2;
+						
+						k = world[y][x] - 1;
+						
+						if (gennum == 2) {
+							
+							f = 0;
+							
+						} else {
+							
+							f = 255 / g;
+							
+						}
+						
+						r = 255 - (k * f);
+							
+						Color gencolor = {r, r, 255, 255};
+						
+						DrawRectangle(x * 5, y * 5, 5, 5, gencolor);
 						
 					}
 					
-					r = 255 - (k * f);
+				} else {
+					
+					if (world[y][x] == 1) {
 						
-					Color gencolor = {r, r, 255, 255};
+						DrawRectangle(x * 5, y * 5, 5, 5, StateOne);
+						
+					}
 					
-					DrawRectangle(x * 5, y * 5, 5, 5, WHITE);
-					
-					DrawRectangle(x * 5, y * 5, 5, 5, gencolor);
+					if (world[y][x] == 2) {
+						
+						DrawRectangle(x * 5, y * 5, 5, 5, StateTwo);
+						
+					}
 					
 				}
 				
@@ -954,8 +1440,6 @@ int main(void) {
 	
 	int phase = 0;
 	
-	int colorized = 0;
-	
 	int eventcounter = 0;
 	
 	int fullsize = 1;
@@ -966,19 +1450,29 @@ int main(void) {
 	
 	char rle[40201] = {0};
 	
+	struct Ruletype ruletype;
+	
 	srand(time(NULL));
 	
 	ruleswitch:;
+	
+	int colorized = 0;
 	
 	int bconds[117] = {0};
 	
 	int sconds[117] = {0};
 	
+	int fconds[117] = {0};
+	
+	int kconds[117] = {0};
+	
+	int lconds[117] = {0};
+	
 	int naive = 0;
 	
 	int gennum = 2;
 	
-	rparse(&bconds, &sconds, &naive, &gennum);
+	rparse(&bconds, &sconds, &fconds, &kconds, &lconds, &naive, &gennum, &ruletype);
 	
 	InitWindow(1000, 1000, "NaiViewer");
 	
@@ -1066,7 +1560,7 @@ int main(void) {
 			
 		}
 		
-		if (IsKeyPressed(KEY_EQUAL)) advance(&world, bconds, sconds, colorized, naive, gennum);
+		if (IsKeyPressed(KEY_EQUAL)) advance(&world, bconds, sconds, fconds, kconds, lconds, colorized, naive, gennum, ruletype);
 		
 		if (IsKeyPressed(KEY_UP) || (IsKeyDown(KEY_W) && !(eventcounter % mod))) {
 			
@@ -1328,7 +1822,7 @@ int main(void) {
 		
 		colorized %= 2;
 		
-		if (IsKeyDown(KEY_SPACE)) advance(&world, bconds, sconds, colorized, naive, gennum);
+		if (IsKeyDown(KEY_SPACE)) advance(&world, bconds, sconds, fconds, kconds, lconds, colorized, naive, gennum, ruletype);
 		
 		eventcounter++;
 		
@@ -1336,7 +1830,7 @@ int main(void) {
 		
 		ClearBackground(BLACK);
 		
-		show(world, cursorpos, selection, colorized, gennum);
+		show(world, cursorpos, selection, colorized, gennum, ruletype);
 		
 		EndDrawing();
 		
