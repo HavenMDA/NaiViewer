@@ -154,7 +154,7 @@ void rparse(int (* bconds)[117], int (* sconds)[117], int * naive, int * gennum)
 			
 		}
 		
-		bend:
+		bend:;
 		
 		c = getchar();
 		
@@ -262,13 +262,13 @@ void rparse(int (* bconds)[117], int (* sconds)[117], int * naive, int * gennum)
 			
 		}
 		
-		send:
+		send:;
 		
 		c = getchar();
 		
 		continue;
 		
-		randgen:
+		randgen:;
 		
 		srand(time(NULL));
 		
@@ -376,7 +376,7 @@ void rparse(int (* bconds)[117], int (* sconds)[117], int * naive, int * gennum)
 		
 		*gennum += (c - '0');
 		
-		gend:
+		gend:;
 		
 		c = getchar();
 		
@@ -468,9 +468,7 @@ void advance(int (* world)[200][200], int bconds[117], int sconds[117], int colo
 					
 				}
 				
-			}
-			
-			if ((*world)[y][x] && !(sconds[dict[binary]])) { /* Death */
+			} else if ((*world)[y][x] && !(sconds[dict[binary]])) { /* Death */
 				
 				if (gennum == 2) { /* Two-state rules */
 					
@@ -490,7 +488,7 @@ void advance(int (* world)[200][200], int bconds[117], int sconds[117], int colo
 					
 					if (naive) {
 						
-						naive_dying:
+						naive_dying:;
 						
 						(*world)[y][x]++;
 						
@@ -502,7 +500,7 @@ void advance(int (* world)[200][200], int bconds[117], int sconds[117], int colo
 						
 					} else {
 						
-						dying:
+						dying:;
 						
 						next[y][x] = (*world)[y][x] + 1;
 						
@@ -512,9 +510,7 @@ void advance(int (* world)[200][200], int bconds[117], int sconds[117], int colo
 					
 				}
 				
-			}
-			
-			if ((*world)[y][x] && sconds[dict[binary]]) { /* Survival */
+			} else if ((*world)[y][x] && sconds[dict[binary]]) { /* Survival */
 				
 				if (gennum == 2) {
 					
@@ -568,6 +564,10 @@ void advance(int (* world)[200][200], int bconds[117], int sconds[117], int colo
 							
 							next[y][x] = 1;
 							
+						} else {
+							
+							goto dying;
+							
 						}
 						
 					}
@@ -600,7 +600,7 @@ void show(int world[200][200], int cursorpos[2], int selection[2][2], int colori
 	
 	int xstart, xend, xinc, ystart, yend, yinc;
 	
-	int a;
+	int g, k, r, f;
 	
 	Color cursor = {255, 0, 0, 128};
 	
@@ -620,16 +620,26 @@ void show(int world[200][200], int cursorpos[2], int selection[2][2], int colori
 					
 				} else {
 					
-					int g = gennum - 2;
+					g = gennum - 2;
 					
-					int k = world[y][x] - 1;
+					k = world[y][x] - 1;
 					
-					int a = k * (255 / g);
+					if (gennum == 2) {
+						
+						f = 0;
+						
+					} else {
+						
+						f = 255 / g;
+						
+					}
+					
+					r = 255 - (k * f);
+						
+					Color gencolor = {r, r, 255, 255};
 					
 					DrawRectangle(x * 5, y * 5, 5, 5, WHITE);
-						
-					Color gencolor = {0, 0, 255, a};
-						
+					
 					DrawRectangle(x * 5, y * 5, 5, 5, gencolor);
 					
 				}
@@ -926,7 +936,7 @@ void makeworld(const char rle[], int (* world)[200][200], int cursorpos[2], int 
 		
 		run = 0;
 		
-		digit:
+		digit:;
 		
 		n++;
 		
@@ -950,7 +960,7 @@ int main(void) {
 	
 	int fullsize = 1;
 	
-	int mod = 1; /* Prevents the event listener from responding too frequently and making the program run too fast. */
+	int mod = 10; /* Prevents the event listener from responding too frequently and making the program run too fast. */
 	
 	int tpressed = 0;
 	
@@ -958,7 +968,7 @@ int main(void) {
 	
 	srand(time(NULL));
 	
-	ruleswitch:
+	ruleswitch:;
 	
 	int bconds[117] = {0};
 	
@@ -1318,7 +1328,7 @@ int main(void) {
 		
 		colorized %= 2;
 		
-		if (IsKeyDown(KEY_SPACE) && !(eventcounter % mod)) advance(&world, bconds, sconds, colorized, naive, gennum);
+		if (IsKeyDown(KEY_SPACE)) advance(&world, bconds, sconds, colorized, naive, gennum);
 		
 		eventcounter++;
 		
