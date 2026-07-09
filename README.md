@@ -1,9 +1,9 @@
 # NaiViewer
-A program for simulating 2-state isotropic non-totalistic CA, like Life and NaiveLife.
+A program for simulating isotropic non-totalistic CA, like Life and NaiveLife.
 
 Features:
 
-- Full support for INT and Generations rules (like Brain's Brain, B2/S/G3)
+- Full support for INT, BSFKL, and Generations rules (like Brain's Brain, B2/S/G3)
 
 - Mouse drawing
 
