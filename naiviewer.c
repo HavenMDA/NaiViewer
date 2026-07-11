@@ -1444,17 +1444,13 @@ int main(void) {
 	
 	int fullsize = 1;
 	
-	int mod = 10; /* Prevents the event listener from responding too frequently and making the program run too fast. */
-	
-	int tpressed = 0;
+	int mod = 1; /* Prevents the event listener from responding too frequently and making the program run too fast. */
 	
 	char rle[40201] = {0};
 	
 	struct Ruletype ruletype;
 	
 	srand(time(NULL));
-	
-	ruleswitch:;
 	
 	int colorized = 0;
 	
@@ -1469,6 +1465,8 @@ int main(void) {
 	int lconds[117] = {0};
 	
 	int naive = 0;
+	
+	int tpressed = 0;
 	
 	int gennum = 2;
 	
@@ -1674,6 +1672,22 @@ int main(void) {
 			
 		}
 		
+		if (IsKeyPressed(KEY_COMMA)) {
+			
+			world[cursorpos[0]][cursorpos[1]] += (gennum - 1);
+			
+			world[cursorpos[0]][cursorpos[1]] %= gennum;
+			
+		}
+		
+		if (IsKeyPressed(KEY_PERIOD)) {
+			
+			world[cursorpos[0]][cursorpos[1]] += 1;
+			
+			world[cursorpos[0]][cursorpos[1]] %= gennum;
+			
+		}
+		
 		if (IsKeyPressed(KEY_C)) makerle(world, selection, &rle, &fullsize);
 		
 		if (IsKeyPressed(KEY_I)) {
@@ -1772,7 +1786,7 @@ int main(void) {
 				
 				for (int x = xstart; x != xend; x += xinc) {
 					
-					world[y][x] = rand() % 2;
+					world[y][x] = rand() % gennum;
 					
 				}
 				
@@ -1782,9 +1796,33 @@ int main(void) {
 		
 		if (IsKeyPressed(KEY_T)) {
 			
-			tpressed = 1;
+			CloseWindow();
 			
-			break;
+			colorized = 0;
+			
+			for (int n = 0; n < 117; n++) {
+				
+				bconds[n] = 0;
+				
+				sconds[n] = 0;
+				
+				fconds[n] = 0;
+				
+				kconds[n] = 0;
+				
+				lconds[n] = 0;
+				
+			}
+			
+			naive = 0;
+			
+			tpressed = 0;
+			
+			gennum = 2;
+			
+			rparse(&bconds, &sconds, &fconds, &kconds, &lconds, &naive, &gennum, &ruletype);
+			
+			InitWindow(1000, 1000, "NaiViewer");
 			
 		}
 		
@@ -1837,14 +1875,6 @@ int main(void) {
 	}
 	
 	CloseWindow();
-	
-	if (tpressed) {
-		
-		tpressed = 0;
-		
-		goto ruleswitch;
-		
-	}
 	
 	return 0;
 	
