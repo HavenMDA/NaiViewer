@@ -12,13 +12,31 @@
 
 /* Compilation command for Raspberry Pi: gcc naiviewer.c -o naiviewer -lraylib -lGLESv2 -lEGL -lm -lpthread -ldl -lX11 */
 
+struct Conds {
+	
+	int bconds[117];
+	
+	int sconds[117];
+	
+	int fconds[117];
+	
+	int kconds[117];
+	
+	int lconds[117];
+	
+	int gennum;
+	
+};
+
 struct Ruletype {
+	
+	int naive;
 	
 	int bsfkl;
 	
 };
 
-void rparse(int (* bconds)[117], int (* sconds)[117], int (* fconds)[117], int (* kconds)[117], int (* lconds)[117], int * naive, int * gennum, struct Ruletype * ruletype) {
+void rparse(struct Conds * conds, struct Ruletype * ruletype) {
 	
 	printf("Rule: ");
 	
@@ -38,7 +56,7 @@ void rparse(int (* bconds)[117], int (* sconds)[117], int (* fconds)[117], int (
 		
 		if (c == 'N') {
 			
-			*naive = 1;
+			((*ruletype).naive) = 1;
 			
 			goto bend;
 			
@@ -58,7 +76,7 @@ void rparse(int (* bconds)[117], int (* sconds)[117], int (* fconds)[117], int (
 				
 				for (int n = 0; n < 13; n++) {
 					
-					(*bconds)[lastdigit * 13 + n] = 1;
+					((*conds).bconds)[lastdigit * 13 + n] = 1;
 					
 				}
 				
@@ -66,13 +84,13 @@ void rparse(int (* bconds)[117], int (* sconds)[117], int (* fconds)[117], int (
 			
 			for (int n = 0; n < 13; n++) {
 				
-				(*bconds)[nn * 13 + n] = 2;
+				((*conds).bconds)[nn * 13 + n] = 2;
 				
 			}
 			
 			lastdigit = nn;
 			
-			(*bconds)[nn] = 1;
+			((*conds).bconds)[nn] = 1;
 			
 		}
 		
@@ -100,21 +118,21 @@ void rparse(int (* bconds)[117], int (* sconds)[117], int (* fconds)[117], int (
 					
 					if (n == i) {
 						
-						(*bconds)[nn * 13 + n] = 0;
+						((*conds).bconds)[nn * 13 + n] = 0;
 						
 					}
 					
 				} else {
 					
-					if ((*bconds)[nn * 13 + n] == 2) {
+					if (((*conds).bconds)[nn * 13 + n] == 2) {
 						
-						(*bconds)[nn * 13 + n] = 0;
+						((*conds).bconds)[nn * 13 + n] = 0;
 						
 					}
 					
-					if (((*bconds)[nn * 13 + n] == 0) && (n == i)) {
+					if ((((*conds).bconds)[nn * 13 + n] == 0) && (n == i)) {
 						
-						(*bconds)[nn * 13 + n] = 1;
+						((*conds).bconds)[nn * 13 + n] = 1;
 						
 					}
 					
@@ -132,9 +150,9 @@ void rparse(int (* bconds)[117], int (* sconds)[117], int (* fconds)[117], int (
 			
 			for (int n = 0; n < 13; n++) {
 				
-				if ((*bconds)[nn * 13 + n] == 2) {
+				if (((*conds).bconds)[nn * 13 + n] == 2) {
 					
-					(*bconds)[nn * 13 + n] = 1;
+					((*conds).bconds)[nn * 13 + n] = 1;
 					
 				}
 				
@@ -146,13 +164,13 @@ void rparse(int (* bconds)[117], int (* sconds)[117], int (* fconds)[117], int (
 			
 			for (int n = 39; n < 52; n++) {
 				
-				(*bconds)[n] = 1;
+				((*conds).bconds)[n] = 1;
 				
 			}
 			
 			for (int n = 26; n < 52; n++) {
 				
-				(*sconds)[n] = 1;
+				((*conds).sconds)[n] = 1;
 				
 			}
 			
@@ -186,19 +204,19 @@ void rparse(int (* bconds)[117], int (* sconds)[117], int (* fconds)[117], int (
 				
 				for (int n = 0; n < 13; n++) {
 					
-					(*sconds)[lastdigit * 13 + n] = 1;
+					((*conds).sconds)[lastdigit * 13 + n] = 1;
 					
 				}}
 			
 			for (int n = 0; n < 13; n++) {
 				
-				(*sconds)[nn * 13 + n] = 2;
+				((*conds).sconds)[nn * 13 + n] = 2;
 				
 			}
 			
 			lastdigit = nn;
 			
-			(*sconds)[nn] = 1;
+			((*conds).sconds)[nn] = 1;
 			
 		}
 		
@@ -226,21 +244,21 @@ void rparse(int (* bconds)[117], int (* sconds)[117], int (* fconds)[117], int (
 					
 					if (n == i) {
 						
-						(*sconds)[nn * 13 + n] = 0;
+						((*conds).sconds)[nn * 13 + n] = 0;
 						
 					}
 					
 				} else {
 					
-					if ((*sconds)[nn * 13 + n] == 2) {
+					if (((*conds).sconds)[nn * 13 + n] == 2) {
 						
-						(*sconds)[nn * 13 + n] = 0;
+						((*conds).sconds)[nn * 13 + n] = 0;
 						
 					}
 					
-					if (((*sconds)[nn * 13 + n] == 0) && (n == i)) {
+					if ((((*conds).sconds)[nn * 13 + n] == 0) && (n == i)) {
 						
-						(*sconds)[nn * 13 + n] = 1;
+						((*conds).sconds)[nn * 13 + n] = 1;
 						
 					}
 					
@@ -258,9 +276,9 @@ void rparse(int (* bconds)[117], int (* sconds)[117], int (* fconds)[117], int (
 			
 			for (int n = 0; n < 13; n++) {
 				
-				if ((*sconds)[nn * 13 + n] == 2) {
+				if (((*conds).sconds)[nn * 13 + n] == 2) {
 					
-					(*sconds)[nn * 13 + n] = 1;
+					((*conds).sconds)[nn * 13 + n] = 1;
 					
 				}
 				
@@ -278,9 +296,9 @@ void rparse(int (* bconds)[117], int (* sconds)[117], int (* fconds)[117], int (
 		
 		srand(time(NULL));
 		
-		*naive = rand() % 2;
+		((*ruletype).naive) = rand() % 2;
 		
-		if (*naive) {
+		if (((*ruletype).naive)) {
 			
 			printf("N");
 			
@@ -292,21 +310,21 @@ void rparse(int (* bconds)[117], int (* sconds)[117], int (* fconds)[117], int (
 			
 			for (int c = 0; c < lengths[n]; c++) {
 				
-				(*bconds)[n * 13 + c] = rand() % 2;
+				((*conds).bconds)[n * 13 + c] = rand() % 2;
 				
 			}
 			
 		}
 		
-		(*bconds)[42] = 1;
+		((*conds).bconds)[42] = 1;
 		
-		(*bconds)[43] = 1;
+		((*conds).bconds)[43] = 1;
 		
 		for (int n = 0; n < 9; n++) {
 			
 			for (int c = 0; c < lengths[n]; c++) {
 				
-				if ((*bconds)[n * 13 + c]) {
+				if (((*conds).bconds)[n * 13 + c]) {
 					
 					printf("%d", n);
 					
@@ -318,7 +336,7 @@ void rparse(int (* bconds)[117], int (* sconds)[117], int (* fconds)[117], int (
 			
 			for (int c = 0; c < lengths[n]; c++) {
 				
-				if ((*bconds)[n * 13 + c]) {
+				if (((*conds).bconds)[n * 13 + c]) {
 					
 					printf("%c", letters[c]);
 					
@@ -334,7 +352,7 @@ void rparse(int (* bconds)[117], int (* sconds)[117], int (* fconds)[117], int (
 			
 			for (int c = 0; c < lengths[n]; c++) {
 				
-				(*sconds)[n * 13 + c] = rand() % 2;
+				((*conds).sconds)[n * 13 + c] = rand() % 2;
 				
 			}
 			
@@ -344,7 +362,7 @@ void rparse(int (* bconds)[117], int (* sconds)[117], int (* fconds)[117], int (
 			
 			for (int c = 0; c < lengths[n]; c++) {
 				
-				if ((*sconds)[n * 13 + c]) {
+				if (((*conds).sconds)[n * 13 + c]) {
 					
 					printf("%d", n);
 					
@@ -356,7 +374,7 @@ void rparse(int (* bconds)[117], int (* sconds)[117], int (* fconds)[117], int (
 			
 			for (int c = 0; c < lengths[n]; c++) {
 				
-				if ((*sconds)[n * 13 + c]) {
+				if (((*conds).sconds)[n * 13 + c]) {
 					
 					printf("%c", letters[c]);
 					
@@ -374,13 +392,13 @@ void rparse(int (* bconds)[117], int (* sconds)[117], int (* fconds)[117], int (
 		
 	}
 	
-	*gennum = 0;
+	((*conds).gennum) = 0;
 	
 	if (c == '\n') {
 		
 		(*ruletype).bsfkl = 0;
 		
-		*gennum = 2;
+		((*conds).gennum) = 2;
 		
 		return;
 		
@@ -400,9 +418,9 @@ void rparse(int (* bconds)[117], int (* sconds)[117], int (* fconds)[117], int (
 		
 		if (c == '/') goto gend;
 		
-		*gennum *= 10;
+		((*conds).gennum) *= 10;
 		
-		*gennum += (c - '0');
+		((*conds).gennum) += (c - '0');
 		
 		gend:;
 		
@@ -410,9 +428,9 @@ void rparse(int (* bconds)[117], int (* sconds)[117], int (* fconds)[117], int (
 		
 	}
 	
-	if (!(*gennum) || (*gennum == 1)) {
+	if (!(((*conds).gennum)) || (((*conds).gennum) == 1)) {
 		
-		 *gennum = 2;
+		 ((*conds).gennum) = 2;
 		 
 	}
 	
@@ -438,19 +456,19 @@ void rparse(int (* bconds)[117], int (* sconds)[117], int (* fconds)[117], int (
 				
 				for (int n = 0; n < 13; n++) {
 					
-					(*fconds)[lastdigit * 13 + n] = 1;
+					((*conds).fconds)[lastdigit * 13 + n] = 1;
 					
 				}}
 			
 			for (int n = 0; n < 13; n++) {
 				
-				(*fconds)[nn * 13 + n] = 2;
+				((*conds).fconds)[nn * 13 + n] = 2;
 				
 			}
 			
 			lastdigit = nn;
 			
-			(*fconds)[nn] = 1;
+			((*conds).fconds)[nn] = 1;
 			
 		}
 		
@@ -478,21 +496,21 @@ void rparse(int (* bconds)[117], int (* sconds)[117], int (* fconds)[117], int (
 					
 					if (n == i) {
 						
-						(*fconds)[nn * 13 + n] = 0;
+						((*conds).fconds)[nn * 13 + n] = 0;
 						
 					}
 					
 				} else {
 					
-					if ((*fconds)[nn * 13 + n] == 2) {
+					if (((*conds).fconds)[nn * 13 + n] == 2) {
 						
-						(*fconds)[nn * 13 + n] = 0;
+						((*conds).fconds)[nn * 13 + n] = 0;
 						
 					}
 					
-					if (((*fconds)[nn * 13 + n] == 0) && (n == i)) {
+					if ((((*conds).fconds)[nn * 13 + n] == 0) && (n == i)) {
 						
-						(*fconds)[nn * 13 + n] = 1;
+						((*conds).fconds)[nn * 13 + n] = 1;
 						
 					}
 					
@@ -510,9 +528,9 @@ void rparse(int (* bconds)[117], int (* sconds)[117], int (* fconds)[117], int (
 			
 			for (int n = 0; n < 13; n++) {
 				
-				if ((*fconds)[nn * 13 + n] == 2) {
+				if (((*conds).fconds)[nn * 13 + n] == 2) {
 					
-					(*fconds)[nn * 13 + n] = 1;
+					((*conds).fconds)[nn * 13 + n] = 1;
 					
 				}
 				
@@ -542,19 +560,19 @@ void rparse(int (* bconds)[117], int (* sconds)[117], int (* fconds)[117], int (
 				
 				for (int n = 0; n < 13; n++) {
 					
-					(*kconds)[lastdigit * 13 + n] = 1;
+					((*conds).kconds)[lastdigit * 13 + n] = 1;
 					
 				}}
 			
 			for (int n = 0; n < 13; n++) {
 				
-				(*kconds)[nn * 13 + n] = 2;
+				((*conds).kconds)[nn * 13 + n] = 2;
 				
 			}
 			
 			lastdigit = nn;
 			
-			(*kconds)[nn] = 1;
+			((*conds).kconds)[nn] = 1;
 			
 		}
 		
@@ -582,21 +600,21 @@ void rparse(int (* bconds)[117], int (* sconds)[117], int (* fconds)[117], int (
 					
 					if (n == i) {
 						
-						(*kconds)[nn * 13 + n] = 0;
+						((*conds).kconds)[nn * 13 + n] = 0;
 						
 					}
 					
 				} else {
 					
-					if ((*kconds)[nn * 13 + n] == 2) {
+					if (((*conds).kconds)[nn * 13 + n] == 2) {
 						
-						(*kconds)[nn * 13 + n] = 0;
+						((*conds).kconds)[nn * 13 + n] = 0;
 						
 					}
 					
-					if (((*kconds)[nn * 13 + n] == 0) && (n == i)) {
+					if ((((*conds).kconds)[nn * 13 + n] == 0) && (n == i)) {
 						
-						(*kconds)[nn * 13 + n] = 1;
+						((*conds).kconds)[nn * 13 + n] = 1;
 						
 					}
 					
@@ -614,9 +632,9 @@ void rparse(int (* bconds)[117], int (* sconds)[117], int (* fconds)[117], int (
 			
 			for (int n = 0; n < 13; n++) {
 				
-				if ((*kconds)[nn * 13 + n] == 2) {
+				if (((*conds).kconds)[nn * 13 + n] == 2) {
 					
-					(*kconds)[nn * 13 + n] = 1;
+					((*conds).kconds)[nn * 13 + n] = 1;
 					
 				}
 				
@@ -646,19 +664,19 @@ void rparse(int (* bconds)[117], int (* sconds)[117], int (* fconds)[117], int (
 				
 				for (int n = 0; n < 13; n++) {
 					
-					(*lconds)[lastdigit * 13 + n] = 1;
+					((*conds).lconds)[lastdigit * 13 + n] = 1;
 					
 				}}
 			
 			for (int n = 0; n < 13; n++) {
 				
-				(*lconds)[nn * 13 + n] = 2;
+				((*conds).lconds)[nn * 13 + n] = 2;
 				
 			}
 			
 			lastdigit = nn;
 			
-			(*lconds)[nn] = 1;
+			((*conds).lconds)[nn] = 1;
 			
 		}
 		
@@ -686,21 +704,21 @@ void rparse(int (* bconds)[117], int (* sconds)[117], int (* fconds)[117], int (
 					
 					if (n == i) {
 						
-						(*lconds)[nn * 13 + n] = 0;
+						((*conds).lconds)[nn * 13 + n] = 0;
 						
 					}
 					
 				} else {
 					
-					if ((*lconds)[nn * 13 + n] == 2) {
+					if (((*conds).lconds)[nn * 13 + n] == 2) {
 						
-						(*lconds)[nn * 13 + n] = 0;
+						((*conds).lconds)[nn * 13 + n] = 0;
 						
 					}
 					
-					if (((*lconds)[nn * 13 + n] == 0) && (n == i)) {
+					if ((((*conds).lconds)[nn * 13 + n] == 0) && (n == i)) {
 						
-						(*lconds)[nn * 13 + n] = 1;
+						((*conds).lconds)[nn * 13 + n] = 1;
 						
 					}
 					
@@ -718,9 +736,9 @@ void rparse(int (* bconds)[117], int (* sconds)[117], int (* fconds)[117], int (
 			
 			for (int n = 0; n < 13; n++) {
 				
-				if ((*lconds)[nn * 13 + n] == 2) {
+				if (((*conds).lconds)[nn * 13 + n] == 2) {
 					
-					(*lconds)[nn * 13 + n] = 1;
+					((*conds).lconds)[nn * 13 + n] = 1;
 					
 				}
 				
@@ -734,11 +752,13 @@ void rparse(int (* bconds)[117], int (* sconds)[117], int (* fconds)[117], int (
 		
 	}
 	
-	*gennum = 3;
+	((*conds).gennum) = 3;
 	
 }
 
-void advance(int (* world)[200][200], int bconds[117], int sconds[117], int fconds[117], int kconds[117], int lconds[117], int colorized, int naive, int gennum, struct Ruletype ruletype) {
+void advance(int (* world)[200][200], struct Conds conds, struct Ruletype ruletype, int colorized) {
+	
+	int xx, yy;
 	
 	int neigh[8][2] = {{1, 1}, {1, 0}, {1, -1}, {0, 1}, {0, -1}, {-1, 1}, {-1, 0}, {-1, -1}};
 	
@@ -764,19 +784,37 @@ void advance(int (* world)[200][200], int bconds[117], int sconds[117], int fcon
 				
 				second *= 2;
 				
-				if ((augx >= 200) || (augy >= 200) || (augx < 0) || (augy < 0)) {
+				if ((ruletype.naive) && ((augx >= 200) || (augy >= 200) || (augx < 0) || (augy < 0))) {
 					
 					continue;
 					
 				}
 				
-				if ((*world)[y + neigh[n][0]][x + neigh[n][1]]) {
+				if (ruletype.naive) {
+					
+					xx = x + neigh[n][1];
+					
+					yy = y + neigh[n][0];
+					
+				} else {
+					
+					xx = x + neigh[n][1] + 200;
+					
+					yy = y + neigh[n][0] + 200;
+					
+					xx %= 200;
+					
+					yy %= 200;
+					
+				}
+				
+				if ((*world)[yy][xx]) {
 					
 					if (!(ruletype.bsfkl)) {
 						
-						if (gennum > 2) {
+						if ((conds.gennum) > 2) {
 							
-							if ((*world)[y + neigh[n][0]][x + neigh[n][1]] == 1) {
+							if ((*world)[yy][xx] == 1) {
 								
 								binary++;
 								
@@ -794,13 +832,13 @@ void advance(int (* world)[200][200], int bconds[117], int sconds[117], int fcon
 						
 					} else {
 						
-						if ((*world)[y + neigh[n][0]][x + neigh[n][1]] == 1) {
+						if ((*world)[yy][xx] == 1) {
 							
 							binary++;
 							
 						}
 						
-						if ((*world)[y + neigh[n][0]][x + neigh[n][1]] == 2) {
+						if ((*world)[yy][xx] == 2) {
 							
 							second++;
 							
@@ -814,9 +852,9 @@ void advance(int (* world)[200][200], int bconds[117], int sconds[117], int fcon
 			
 			if (!(ruletype.bsfkl)) {
 				
-				if (!(*world)[y][x] && bconds[dict[binary]]) { /* Birth */
+				if (!(*world)[y][x] && (conds.bconds)[dict[binary]]) { /* Birth */
 					
-					if (naive) {
+					if ((ruletype.naive)) {
 						
 						if (colorized) {
 							
@@ -828,7 +866,7 @@ void advance(int (* world)[200][200], int bconds[117], int sconds[117], int fcon
 							
 						}
 						
-						continue; /* Prevents cell states from being overwritten more than once in naive rules */
+						continue; /* Prevents cell states from being overwritten more than once in (ruletype.naive) rules */
 							
 					} else {
 						
@@ -844,15 +882,15 @@ void advance(int (* world)[200][200], int bconds[117], int sconds[117], int fcon
 						
 					}
 					
-				} else if ((*world)[y][x] && !(sconds[dict[binary]])) { /* Death */
+				} else if ((*world)[y][x] && !((conds.sconds)[dict[binary]])) { /* Death */
 					
-					if (gennum == 2) { /* Two-state rules */
+					if ((conds.gennum) == 2) { /* Two-state rules */
 						
-						if (naive) {
+						if ((ruletype.naive)) {
 							
 							(*world)[y][x] = 0;
 							
-							continue; /* Prevents cell states from being overwritten more than once in naive rules */
+							continue; /* Prevents cell states from being overwritten more than once in (ruletype.naive) rules */
 							
 						} else {
 							
@@ -862,17 +900,17 @@ void advance(int (* world)[200][200], int bconds[117], int sconds[117], int fcon
 						
 					} else { /* Generations rules */
 						
-						if (naive) {
+						if ((ruletype.naive)) {
 							
 							naive_dying:;
 							
 							(*world)[y][x]++;
 							
-							(*world)[y][x] %= gennum;
+							(*world)[y][x] %= (conds.gennum);
 							
 							/* The two lines above increment all dying cells and kill cells in their last stage of death */
 							
-							continue; /* Prevents cell states from being overwritten more than once in naive rules */
+							continue; /* Prevents cell states from being overwritten more than once in (ruletype.naive) rules */
 							
 						} else {
 							
@@ -880,17 +918,17 @@ void advance(int (* world)[200][200], int bconds[117], int sconds[117], int fcon
 							
 							next[y][x] = (*world)[y][x] + 1;
 							
-							next[y][x] %= gennum;
+							next[y][x] %= (conds.gennum);
 							
 						}
 						
 					}
 					
-				} else if ((*world)[y][x] && sconds[dict[binary]]) { /* Survival */
+				} else if ((*world)[y][x] && (conds.sconds)[dict[binary]]) { /* Survival */
 					
-					if (gennum == 2) {
+					if ((conds.gennum) == 2) {
 						
-						if (naive) {
+						if ((ruletype.naive)) {
 							
 							if (colorized) {
 								
@@ -920,7 +958,7 @@ void advance(int (* world)[200][200], int bconds[117], int sconds[117], int fcon
 						
 					} else {
 						
-						if (naive) {
+						if ((ruletype.naive)) {
 							
 							if ((*world)[y][x] == 1) {
 								
@@ -954,9 +992,9 @@ void advance(int (* world)[200][200], int bconds[117], int sconds[117], int fcon
 				
 			} else {
 				
-				if (((*world)[y][x] == 0) && (bconds[dict[binary]] && fconds[dict[second]])) {
+				if (((*world)[y][x] == 0) && ((conds.bconds)[dict[binary]] && (conds.fconds)[dict[second]])) {
 					
-					if (naive) {
+					if ((ruletype.naive)) {
 						
 						(*world)[y][x] = 1;
 						
@@ -968,9 +1006,9 @@ void advance(int (* world)[200][200], int bconds[117], int sconds[117], int fcon
 						
 					}
 					
-				} else if (((*world)[y][x] == 1) && kconds[dict[second]]) {
+				} else if (((*world)[y][x] == 1) && (conds.kconds)[dict[second]]) {
 					
-					if (naive) {
+					if ((ruletype.naive)) {
 						
 						(*world)[y][x] = 0;
 						
@@ -982,9 +1020,9 @@ void advance(int (* world)[200][200], int bconds[117], int sconds[117], int fcon
 						
 					}
 					
-				} else if (((*world)[y][x] == 1) && sconds[dict[binary]]) {
+				} else if (((*world)[y][x] == 1) && (conds.sconds)[dict[binary]]) {
 					
-					if (naive) {
+					if ((ruletype.naive)) {
 						
 						(*world)[y][x] = 1;
 						
@@ -996,9 +1034,9 @@ void advance(int (* world)[200][200], int bconds[117], int sconds[117], int fcon
 						
 					}
 					
-				} else if (((*world)[y][x] == 1) && (!kconds[dict[second]] && !sconds[dict[binary]])) {
+				} else if (((*world)[y][x] == 1) && (!(conds.kconds)[dict[second]] && !(conds.sconds)[dict[binary]])) {
 					
-					if (naive) {
+					if ((ruletype.naive)) {
 						
 						(*world)[y][x] = 2;
 						
@@ -1010,9 +1048,9 @@ void advance(int (* world)[200][200], int bconds[117], int sconds[117], int fcon
 						
 					}
 					
-				} else if (((*world)[y][x] == 2) && lconds[dict[binary]]) {
+				} else if (((*world)[y][x] == 2) && (conds.lconds)[dict[binary]]) {
 					
-					if (naive) {
+					if ((ruletype.naive)) {
 						
 						(*world)[y][x] = 0;
 						
@@ -1024,9 +1062,9 @@ void advance(int (* world)[200][200], int bconds[117], int sconds[117], int fcon
 						
 					}
 				
-				} else if (((*world)[y][x] == 2) && !lconds[dict[binary]]) {
+				} else if (((*world)[y][x] == 2) && !(conds.lconds)[dict[binary]]) {
 					
-					if (naive) {
+					if ((ruletype.naive)) {
 						
 						(*world)[y][x] = 2;
 						
@@ -1046,7 +1084,7 @@ void advance(int (* world)[200][200], int bconds[117], int sconds[117], int fcon
 		
 	}
 	
-	if (!naive) {
+	if (!(ruletype.naive)) {
 		
 		for (int y = 0; y < 200; y++) {
 			
@@ -1062,7 +1100,7 @@ void advance(int (* world)[200][200], int bconds[117], int sconds[117], int fcon
 	
 }
 
-void show(int world[200][200], int cursorpos[2], int selection[2][2], int colorized, int gennum, struct Ruletype ruletype) {
+void show(int world[200][200], int cursorpos[2], int selection[2][2], int colorized, struct Conds conds, struct Ruletype ruletype) {
 	
 	int xstart, xend, xinc, ystart, yend, yinc;
 	
@@ -1092,11 +1130,11 @@ void show(int world[200][200], int cursorpos[2], int selection[2][2], int colori
 						
 					} else {
 						
-						g = gennum - 2;
+						g = (conds.gennum) - 2;
 						
 						k = world[y][x] - 1;
 						
-						if (gennum == 2) {
+						if ((conds.gennum) == 2) {
 							
 							f = 0;
 							
@@ -1444,9 +1482,13 @@ int main(void) {
 	
 	int fullsize = 1;
 	
-	int mod = 1; /* Prevents the event listener from responding too frequently and making the program run too fast. */
+	int mod = 40; /* Prevents the event listener from responding too frequently and making the program run too fast. */
+	
+	int drawmod = 2;
 	
 	char rle[40201] = {0};
+	
+	struct Conds conds;
 	
 	struct Ruletype ruletype;
 	
@@ -1454,23 +1496,27 @@ int main(void) {
 	
 	int colorized = 0;
 	
-	int bconds[117] = {0};
+	for (int n = 0; n < 117; n++) {
+		
+		conds.bconds[n] = 0;
+		
+		conds.sconds[n] = 0;
+		
+		conds.fconds[n] = 0;
+		
+		conds.kconds[n] = 0;
+		
+		conds.lconds[n] = 0;
+		
+	}
 	
-	int sconds[117] = {0};
+	ruletype.naive = 0;
 	
-	int fconds[117] = {0};
+	ruletype.bsfkl = 0;
 	
-	int kconds[117] = {0};
+	conds.gennum = 2;
 	
-	int lconds[117] = {0};
-	
-	int naive = 0;
-	
-	int tpressed = 0;
-	
-	int gennum = 2;
-	
-	rparse(&bconds, &sconds, &fconds, &kconds, &lconds, &naive, &gennum, &ruletype);
+	rparse(&conds, &ruletype);
 	
 	InitWindow(1000, 1000, "NaiViewer");
 	
@@ -1558,7 +1604,7 @@ int main(void) {
 			
 		}
 		
-		if (IsKeyPressed(KEY_EQUAL)) advance(&world, bconds, sconds, fconds, kconds, lconds, colorized, naive, gennum, ruletype);
+		if (IsKeyPressed(KEY_EQUAL)) advance(&world, conds, ruletype, colorized);
 		
 		if (IsKeyPressed(KEY_UP) || (IsKeyDown(KEY_W) && !(eventcounter % mod))) {
 			
@@ -1674,9 +1720,9 @@ int main(void) {
 		
 		if (IsKeyPressed(KEY_COMMA)) {
 			
-			world[cursorpos[0]][cursorpos[1]] += (gennum - 1);
+			world[cursorpos[0]][cursorpos[1]] += (conds.gennum - 1);
 			
-			world[cursorpos[0]][cursorpos[1]] %= gennum;
+			world[cursorpos[0]][cursorpos[1]] %= conds.gennum;
 			
 		}
 		
@@ -1684,7 +1730,7 @@ int main(void) {
 			
 			world[cursorpos[0]][cursorpos[1]] += 1;
 			
-			world[cursorpos[0]][cursorpos[1]] %= gennum;
+			world[cursorpos[0]][cursorpos[1]] %= conds.gennum;
 			
 		}
 		
@@ -1744,7 +1790,7 @@ int main(void) {
 			
 		}
 		
-		if (IsKeyPressed(KEY_K) && (gennum == 2)) colorized++;
+		if (IsKeyPressed(KEY_K) && (conds.gennum == 2)) colorized++;
 		
 		if (IsKeyPressed(KEY_Q)) break;
 		
@@ -1786,7 +1832,7 @@ int main(void) {
 				
 				for (int x = xstart; x != xend; x += xinc) {
 					
-					world[y][x] = rand() % gennum;
+					world[y][x] = rand() % conds.gennum;
 					
 				}
 				
@@ -1796,33 +1842,29 @@ int main(void) {
 		
 		if (IsKeyPressed(KEY_T)) {
 			
-			CloseWindow();
-			
 			colorized = 0;
 			
 			for (int n = 0; n < 117; n++) {
 				
-				bconds[n] = 0;
+				conds.bconds[n] = 0;
 				
-				sconds[n] = 0;
+				conds.sconds[n] = 0;
 				
-				fconds[n] = 0;
+				conds.fconds[n] = 0;
 				
-				kconds[n] = 0;
+				conds.kconds[n] = 0;
 				
-				lconds[n] = 0;
+				conds.lconds[n] = 0;
 				
 			}
 			
-			naive = 0;
+			ruletype.naive = 0;
 			
-			tpressed = 0;
+			ruletype.bsfkl = 0;
 			
-			gennum = 2;
+			conds.gennum = 2;
 			
-			rparse(&bconds, &sconds, &fconds, &kconds, &lconds, &naive, &gennum, &ruletype);
-			
-			InitWindow(1000, 1000, "NaiViewer");
+			rparse(&conds, &ruletype);
 			
 		}
 		
@@ -1854,13 +1896,17 @@ int main(void) {
 			
 		}
 		
+		cursorpos[0] += 200;
+		
+		cursorpos[1] += 200;
+		
 		cursorpos[0] %= 200;
 		
 		cursorpos[1] %= 200;
 		
 		colorized %= 2;
 		
-		if (IsKeyDown(KEY_SPACE)) advance(&world, bconds, sconds, fconds, kconds, lconds, colorized, naive, gennum, ruletype);
+		if (IsKeyDown(KEY_SPACE) && !(eventcounter % drawmod)) advance(&world, conds, ruletype, colorized);
 		
 		eventcounter++;
 		
@@ -1868,7 +1914,7 @@ int main(void) {
 		
 		ClearBackground(BLACK);
 		
-		show(world, cursorpos, selection, colorized, gennum, ruletype);
+		show(world, cursorpos, selection, colorized, conds, ruletype);
 		
 		EndDrawing();
 		
